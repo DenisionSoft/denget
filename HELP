@@ -1,0 +1,391 @@
+General (l56)
+This is a general help page with a list of commands.
+For detailed help on a command, type 'denget help <command>' or 'denget <command> -h'.
+To see the status of denget features, type 'denget features'.
+For usage information and examples, refer to the documentation at the GitHub repository.
+Legend - <required> [optional] [-flag <value>]
+
+Usage: denget <command> [options] [flags]
+
+Flags:
+    -h, -help    Show help for command
+    -v, -version Show version information
+    -f, -force   Run denget in force mode
+    -q, -quiet   Less verbose output
+
+Commands:
+    help            Show help for a command
+    about           Show information about denget
+    install         Install an app
+    uninstall       Uninstall an app
+    upgrade         Upgrade an app
+    list            List installed apps
+    which           Show the path to an installed app
+    launch          Launch an installed app
+    status          Check for updates for installed apps
+    available       List available to install apps
+    search          Search for apps in available buckets
+    update          Fetch the latest manifests from buckets with configured sources
+    dependencies    Show dependencies for an app
+    cat             Show information about an app from its manifest
+    rclone          Run commands with rclone used by denget
+    features        Show the status of denget features
+    config          Edit denget config and data files
+
+    bucket          A set of subcommands for managing buckets. Usage: 'denget bucket <command>'
+        list        List available buckets
+        add         Add a bucket from a repository
+        update      Update a bucket from a repository
+        remove      Remove a bucket
+    
+    source          A set of subcommands for managing buckets sources. Usage: 'denget source <command>'
+        list        List available sources
+        add         Add a new source
+        edit        Edit a source
+        remove      Remove a source
+    
+    cloud           A set of subcommands for managing cloud storages. Usage: 'denget cloud <command>'
+        support     Cloud support feature status and information
+        list        List available cloud remotes or contents of a remote
+        add         Add a new cloud storage
+        remove      Remove a cloud storage
+    
+Special commands:
+    upgrade denget    Upgrade denget to the latest version
+    uninstall denget  Uninstall denget
+    which denget      Show the path to the denget executable
+    status denget     Check for updates for denget
+
+Command - help (l7)
+Show help for a command
+
+Usage: denget help [command]
+
+Description:
+    Shows help message for a given command.
+    If no command is specified, shows general help.
+
+Command - about (l9)
+Show information about denget
+
+Usage: denget about
+
+Flags:
+    -h, -help    Show this help message
+
+Description:
+    Shows information about denget, such as license and current version.
+
+Command - install (l16)
+Install an app
+
+Usage: denget install <name> [bucket] [-path <path>]
+
+Flags:
+    -h, -help    Show this help message
+    -f, -force   Run denget in force mode
+    -q, -quiet   Less verbose output
+    -bucket      Specify bucket to install from
+    -path        Specify path to install to (only for portable apps)
+
+Description:
+    Installs an app using its manifest from a bucket.
+    If no bucket is specified, denget will default to the 'main' bucket.
+    Portable apps are installed to 'denget\apps' by default.
+    You can specify a custom path with the -path flag.
+
+Command - uninstall (l17)
+Uninstall an app
+
+Usage: denget uninstall <name> [bucket]
+
+Flags:
+    -h, -help    Show this help message
+    -f, -force   Run denget in force mode
+    -q, -quiet   Less verbose output
+    -bucket      Specify bucket to uninstall from
+
+Description:
+    Uninstalls an app using its manifest from a bucket that it was installed from.
+    If bucket is not specified and cannot be found in data.json file, denget won't uninstall the app. This can be bypassed with the -force flag, which will give you an option to manually specify the bucket.
+    Also, -force flag will let you uninstall apps not found by denget in the data.json file. This can help with troubleshooting previous failed uninstallation attempts.
+
+    Special command available - 'denget uninstall denget'.
+    It will uninstall denget with all portable apps installed within, delete .dengetrc file, start menu shortcuts and remove denget entry from PATH variable. -force flag will skip the warning of possible data loss. Backup of necessary data, apps and config files is recommended.
+
+Command - upgrade (l18)
+Upgrade an app
+
+Usage: denget upgrade <name> [bucket]
+
+Flags:
+    -h, -help    Show this help message
+    -f, -force   Run denget in force mode
+    -q, -quiet   Less verbose output
+    -bucket      Specify bucket to upgrade from
+
+Description:
+    Upgrades an app using its manifest from a bucket it was installed from.
+    You can specify a bucket with the -bucket flag in case the bucket for the installed app has been changed.
+    Warning: this command is experimental and updates apps by uninstalling and reinstalling them. 
+    This will delete the app and its data and may cause data loss. Use at your own risk.
+
+Special command available - 'denget upgrade denget'.
+    It will upgrade denget to the latest version.
+
+Command - list (l10)
+List installed apps
+
+Usage: denget list [full]
+
+Flags:
+    -h, -help    Show this help message
+
+Description:
+    Lists all installed apps in alphabetical order, with their version, bucket, portability and path.
+    You can use 'denget list full' to also include path to the executable.
+
+Command - which (l12)
+Show the path to an installed app
+
+Usage: denget which <name>
+
+Flags:
+    -h, -help    Show this help message
+
+Description:
+    Shows the path to the executable of an installed app.
+
+    Special command available - 'denget which denget'.
+    Shows the path to the denget executable.
+
+Command - launch (l10)
+Launch an installed app
+
+Usage: denget launch <name>
+
+Description:
+    Prompts to enter arguments for the app (useful for command-line programs) and launches it.
+    If you just want to launch the app, press Enter.
+    To see what's being launched, check the app's executable path with the 'denget which <name>' command.
+    Note: 'denget launch' relies on strings when passing arguments, so some things might not work.
+    To use complex arguments you might want to run using full path (from 'denget which') rather than via this command.
+    
+
+Command - status (l18)
+Check for updates for installed apps
+
+Usage: denget status [name] [bucket]
+
+Flags:
+    -h, -help    Show this help message
+    -f, -force   Run denget in force mode
+    -q, -quiet   Less verbose output
+    -bucket      Specify bucket to check for updates from
+
+Description:
+    Checks for updates for installed apps.
+    If no app name is specified, checks all installed apps and lists only those with available updates.
+    If you specify an app name, will show the latest version available, or that the app is up to date, or that the app can't be checked for updates (in case of app's manifest source type being 'permalink').
+    You can specify a bucket with the -bucket flag in case the bucket for the installed app has been changed.
+
+    Special command available - 'denget status denget'.
+    Checks for denget updates.
+
+Command - available (l11)
+List available to install apps
+
+Usage: denget available [bucket]
+
+Flags:
+    -h, -help    Show this help message
+    -bucket      Specify bucket to list apps from
+
+Description:
+    Lists all available to install apps from available buckets.
+    If a bucket is specified, lists all available to install apps from that bucket.
+
+Command - search (l9)
+Search for apps in available buckets
+
+Usage: denget search <name>
+
+Flags:
+    -h, -help    Show this help message
+
+Description:
+    Searches for apps in all available buckets.
+
+Command - update (l11)
+Fetch the latest manifests from buckets with configured sources
+
+Usage: denget update
+
+Flags:
+    -h, -help    Show this help message
+
+Description:
+    Fetches the latest manifests from buckets with configured sources.
+    This command requires git to be installed and available in PATH.
+    You can update individual buckets with 'denget bucket update <name>' command.
+
+Command - dependencies (l10)
+Show dependencies for an app
+
+Usage: denget dependencies <name> <bucket>
+
+Flags:
+    -h, -help    Show this help message
+
+Description:
+    Shows a list of dependencies for an app from its manifest.
+    Note that it will show dependencies from the available manifest, so it may not be accurate for an installed app.
+
+Command - cat (l10)
+Show information about an app from its manifest
+
+Usage: denget cat <name> <bucket>
+
+Flags:
+    -h, -help    Show this help message
+
+Description:
+    Shows information about an app from "Data Setup" section of its manifest, such as name, portability, version, source, executable and uninstaller paths and dependencies.
+    Note that it will show information from the available manifest, not an information about an installed app.
+
+Command - rclone (l15)
+Run commands with rclone used by denget
+
+Usage: denget rclone
+
+Description:
+    This is essentially a wrapper for rclone denget is using, so you can run rclone commands manually.
+    After you run 'denget rclone', a new line with '> rclone' will appear.
+    Just type your command and arguments there like you would do with rclone, for example 'rclone listremotes'.
+
+    denget comes with built-in commands to manage cloud storages, please refer to 'denget help cloud' command.
+
+    For information on rclone version priorities and which rclone is currently used by denget for cloud functionality, refer to 'denget cloud support' command.
+
+    Note: to use complex arguments you might want to use the usual full path, which can be obtained with 'denget which rclone' for local rclone.
+    'denget rclone' relies on strings when passing arguments, so some things might not work.
+
+Command - features (l8)
+Show the status of denget features
+
+Usage: denget features
+
+Description:
+    Shows the status of denget optional features.
+    Includes - supported sources for apps, commands that require git, faster app downloads with aria2.
+    If a feature is disabled, gives a way to enable it.
+
+Command - config (l8)
+Edit denget config and data files
+
+Usage: denget config
+
+Description:
+    Gives you an option to edit data.json, .dengetrc and, if available, local rclone.conf files. It can be useful for troubleshooting or for advanced users. After invoking this command, you will be prompted to choose which file to edit and using which editor.
+
+    Be careful when editing config files manually, as it may break denget functionality or cause unexpected behavior.
+
+Command - bucket (l29)
+A set of subcommands for managing buckets
+
+Usage: denget bucket <subcommand> [<args>]
+
+Flags:
+    -h, -help    Show this help message
+    -f, -force   Run denget in force mode
+    -q, -quiet   Less verbose output
+
+Description:
+    A set of subcommands for managing buckets, which are collections of manifests (scripts containing apps installing and uninstalling procedures). Note that most of these commands require git to be installed and available in PATH. You can manage buckets manually by putting and editing folders with apps manifests in the 'denget\data\buckets' folder.
+
+Subcommands:
+    list
+    Lists all available buckets.
+
+    add <bucket>
+    Adds a bucket from a repository configured using sources.
+    To add a bucket this way, its source has to be configured using 'denget source' set of commands.
+
+    update <bucket>
+    Updates a bucket from a repository configured using sources.
+    Same restrictions apply as for 'add' command.
+
+    remove <bucket>
+    Removes an available bucket. 
+    If it was previously added from a configued source, you can add it back using 'add' command.
+    -force flag will allow you to remove a default 'main' bucket. 
+    This will break some denget functionality, use only if you know what you are doing.
+
+Command - source (l37)
+A set of subcommands for managing buckets sources.
+
+Usage: denget source <subcommand> [<args>]
+
+Flags:
+    -h, -help    Show this help message
+    -f, -force   Run denget in force mode
+    -q, -quiet   Less verbose output
+
+Description:
+    A set of subcommands for managing buckets sources, which are git repositories containing manifests for a bucket. 
+    Configuring sources for buckets allows you to add and update buckets automatically using build-in commands. 
+    Note that most of these commands require git to be installed and available in PATH. 
+    You can manage buckets manually by putting folders with apps manifests in the 'denget\data\buckets' folder.
+
+Subcommands:
+    list
+    Lists available buckets sources.
+
+    add
+    Adds a bucket source to data.json file.
+    You will be prompted to enter a name for the source and a URL to the repository. 
+    It's recommended to use HTTPS URLs to GitHub repositories in a form of 'https://github.com/<your_repo>'.
+    A source name should be the same as the name of the bucket you want to add and later update from this source.
+
+    edit
+    Edits a bucket source in data.json file.
+    You will be prompted to enter a name of the source to edit. 
+    After that, you will be able to enter a new source name and URL.
+    -force flag will allow you to edit a default 'main' bucket source.
+    This may break some denget functionality, use only if you know what you are doing.
+
+    remove
+    Removes a bucket source from data.json file.
+    You will be prompted to enter a name of the source to remove.
+    -force flag will allow you to remove a default 'main' bucket source.
+    This will break some denget functionality, use only if you know what you are doing.
+
+Command - cloud (l28)
+A set of subcommands for managing cloud storages
+
+Usage: denget cloud <subcommand> [<args>]
+
+Flags:
+    -h, -help    Show this help message
+    -f, -force   Run denget in force mode
+    -q, -quiet   Less verbose output
+
+Description:
+    A set of subcommands for managing cloud storages, which can be used as private sources for apps. 
+    To enable cloud support, denget wraps rclone.
+    For more information, refer to 'denget cloud support' and the GitHub repositories of rclone and denget.
+
+Subcommands:
+    support
+    Shows current cloud support feature status, including which rclone is currently used by denget.
+    Also shows general information about rclone version prioritization and cloud support feature.
+
+    list [<remote>]
+    Lists available cloud remotes by wrapping 'rclone listremotes' command.
+    If a remote name is provided, it will list contents of the remote by wrapping 'rclone ls' command.
+
+    add
+    Adds a new cloud remote by wrapping 'rclone config' command, so you'll be working with rclone directly.
+
+    remove <remote>
+    Removes a cloud remote by wrapping 'rclone config delete' command.
