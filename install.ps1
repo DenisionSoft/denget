@@ -91,17 +91,6 @@ $datajson = @"
 
 $datajson | Out-File "$dgpath\data\data.json"
 
-# create .dengetrc
-$dengetrc = @"
-{
-    "dgpath": ""
-}
-"@
-
-$dengetrc = $dengetrc | ConvertFrom-JSON
-$dengetrc.dgpath = $dgpath
-$dengetrc | ConvertTo-Json | Out-File "$env:USERPROFILE\.dengetrc"
-
 # get the latest main bucket
 $oldProgressPreference = $ProgressPreference
 $global:ProgressPreference = 'SilentlyContinue'

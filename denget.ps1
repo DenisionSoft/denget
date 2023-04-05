@@ -9,7 +9,7 @@ param (
    [switch]$quiet = $false
 )
 
-$dgver = "1.0.0"
+$dgver = "1.0.1"
 
 # function - general - Write-Host quiet-sensitive wrapper
 function Write-Quiet {
@@ -24,11 +24,9 @@ function Write-Quiet {
     }
 }
 
-# function - general - retrieve denget path from .dengetrc file
+# function - general - retrieve denget path
 function getdgpath {
-   $json = Get-Content -Path "$env:USERPROFILE\.dengetrc" -Raw
-   $dengetrc = $json | ConvertFrom-Json
-   return $dengetrc.dgpath
+   return $PSScriptRoot
 }
 
 $dgpath = getdgpath
@@ -300,8 +298,6 @@ if($cmd -eq "uninstall")
 
       Get-ChildItem "$dgpath" -Recurse | Remove-Item -Force -Recurse
       Remove-Item "$dgpath" -Recurse -Force
-
-      Remove-Item "$env:USERPROFILE\.dengetrc" -Force
 
       Write-Quiet "denget succesfully uninstalled! Hope to see you soon!"
       exit
@@ -1444,14 +1440,14 @@ if($cmd -eq "config")
    if (find rclone)
    {
       $rclone = getrclone
-      $configoptions = @("data.json", ".dengetrc", "rclone.conf")
+      $configoptions = @("data.json", "rclone.conf")
       $isrclone = $true
       $rclonever = (Get-ChildItem "$dgpath\apps\rclone").Name
       $rcloneconf = "$dgpath\apps\rclone\$rclonever\rclone.conf"
    }
    else
    {
-      $configoptions = @("data.json", ".dengetrc")
+      $configoptions = @("data.json")
       $isrclone = $false
    }
 
@@ -1464,8 +1460,7 @@ if($cmd -eq "config")
    $choice = Read-Host
 
    if ($choice -eq 1) { $file = "$dgpath\data\data.json" }
-   elseif ($choice -eq 2) { $file = "$env:USERPROFILE\.dengetrc" }
-   elseif ($isrclone -and $choice -eq 3) { $file = $rcloneconf }
+   elseif ($isrclone -and $choice -eq 2) { $file = $rcloneconf }
    else { Write-Host "Error: " -f r -n; Write-Host "invalid choice."; exit }
 
    $editoroptions = @()
