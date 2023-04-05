@@ -111,7 +111,7 @@ Description:
     Also, -force flag will let you uninstall apps not found by denget in the data.json file. This can help with troubleshooting previous failed uninstallation attempts.
 
     Special command available - 'denget uninstall denget'.
-    It will uninstall denget with all portable apps installed within, delete .dengetrc file, start menu shortcuts and remove denget entry from PATH variable. -force flag will skip the warning of possible data loss. Backup of necessary data, apps and config files is recommended.
+    It will uninstall denget with all portable apps installed within, delete start menu shortcuts and remove denget entry from PATH variable. -force flag will skip the warning of possible data loss. Backup of necessary data, apps and config files is recommended.
 
 Command - upgrade (l18)
 Upgrade an app
@@ -286,7 +286,7 @@ Edit denget config and data files
 Usage: denget config
 
 Description:
-    Gives you an option to edit data.json, .dengetrc and, if available, local rclone.conf files. It can be useful for troubleshooting or for advanced users. After invoking this command, you will be prompted to choose which file to edit and using which editor.
+    Gives you an option to edit data.json and, if available, local rclone.conf files. It can be useful for troubleshooting or for advanced users. After invoking this command, you will be prompted to choose which file to edit and using which editor.
 
     Be careful when editing config files manually, as it may break denget functionality or cause unexpected behavior.
 

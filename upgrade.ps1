@@ -38,6 +38,13 @@ $major = $curverArr[0]
 $minor = $curverArr[1]
 $patch = $curverArr[2]
 
-## <VERSION> - <CHANGE>
+## 1.0.1 - .dengetrc file was removed
+
+if ($major -eq 1 -and $minor -eq 0 -and $patch -lt 1) {
+   Write-Quiet "Removing .dengetrc file..."
+   if(Test-Path "$env:USERPROFILE\.dengetrc") {
+      Remove-Item "$env:USERPROFILE\.dengetrc" -Force
+   }
+}
 
 return 0
