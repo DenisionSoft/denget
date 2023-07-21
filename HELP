@@ -48,6 +48,7 @@ Commands:
         support     Cloud support feature status and information
         list        List available cloud remotes or contents of a remote
         add         Add a new cloud storage
+        import      Import cloud storages from 'remotes.txt' file
         remove      Remove a cloud storage
     
 Special commands:
@@ -360,7 +361,7 @@ Subcommands:
     -force flag will allow you to remove a default 'main' bucket source.
     This will break some denget functionality, use only if you know what you are doing.
 
-Command - cloud (l28)
+Command - cloud (l32)
 A set of subcommands for managing cloud storages
 
 Usage: denget cloud <subcommand> [<args>]
@@ -386,6 +387,10 @@ Subcommands:
 
     add
     Adds a new cloud remote by wrapping 'rclone config' command, so you'll be working with rclone directly.
+
+    import <bucket>
+    Imports cloud storages from 'remotes.txt' file if its present in the bucket folder.
+    Please don't include this file in public buckets as it contains sensitive information.
 
     remove <remote>
     Removes a cloud remote by wrapping 'rclone config delete' command.

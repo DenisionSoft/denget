@@ -9,7 +9,7 @@ param (
    [switch]$quiet = $false
 )
 
-$dgver = "1.0.1"
+$dgver = "1.0.2"
 
 # function - general - Write-Host quiet-sensitive wrapper
 function Write-Quiet {
@@ -946,6 +946,7 @@ if($cmd -eq "bucket")
       if ($exitcode -eq 0)
       {
          Write-Quiet "Bucket " -n; Write-Quiet "$bucket" -f gre -n; Write-Quiet " added successfully! To update it, use '" -n; Write-Quiet "denget bucket update $bucket" -f m -n; Write-Quiet "'."
+         Write-Quiet "To import cloud remotes from the bucket, use '" -n; Write-Quiet "denget cloud import $bucket" -f m -n; Write-Quiet "'."
       }
       else
       {
@@ -1126,6 +1127,55 @@ if($cmd -eq "cloud")
       {
          & $rclone config delete $remote
       }
+   }
+
+   if ($name -eq "import")
+   {
+      if (!(find rclone))
+      {
+         Write-Host "Error: " -f r -n
+         Write-Host "only local rclone from denget supported. Please refer to '" -n; Write-Host "denget cloud support" -f m -n; Write-Host "'."
+         exit
+      }
+
+      if ($remote -eq "")
+      {
+         Write-Host "Error: " -f r -n
+         Write-Host "bucket name is not specified."
+         exit
+      }
+
+      $bucket = $remote # for consistency
+
+      if (!(Test-Path -Path "$dgpath\data\buckets\$bucket"))
+      {
+         Write-Host "Error: " -f r -n
+         Write-Host "bucket " -n; Write-Host "$bucket" -f gre -n; Write-Host " doesn't exist."
+         exit
+      }
+
+      $importfile = Get-ChildItem -Path "$dgpath\data\buckets\$bucket" -Recurse | Where-Object {($_.name -eq "remotes.txt")}| %{$_.FullName}
+      if ($null -eq $importfile)
+      {
+         Write-Host "Error: " -f r -n
+         Write-Host "bucket " -n; Write-Host "$bucket" -f gre -n; Write-Host " doesn't contain a 'remotes.txt' file."
+         exit
+      }
+
+      Write-Host "File 'remotes.txt' won't be checked for validity. Are you sure to import its contents to your rclone config? (y/n): " -n
+      $answer = Read-Host
+      if ($answer -eq "y" -or $answer -eq "Y")
+      {
+         $rclonever = (Get-ChildItem "$dgpath\apps\rclone").Name
+         $rcloneconf = "$dgpath\apps\rclone\$rclonever\rclone.conf"
+
+         $content = Get-Content -Path $importfile
+         $content | Out-File -FilePath $rcloneconf -Append
+
+         Write-Host "Remotes imported successfully."
+      }
+
+      exit
    }
 
 }
