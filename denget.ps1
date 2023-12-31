@@ -9,7 +9,7 @@ param (
    [switch]$quiet = $false
 )
 
-$dgver = "1.0.2"
+$dgver = "1.0.3"
 
 # function - general - Write-Host quiet-sensitive wrapper
 function Write-Quiet {
@@ -135,6 +135,24 @@ function getrclone() {
    {
       return $null
    }
+}
+
+# function - resolve torrent folder name
+function btfolder([string]$source) {
+   $aria2 = getinstalled "aria2" executable
+   New-Item -Path "$dgpath\temp\btmeta" -ItemType Directory -Force | Out-Null
+   $aria2params = @{
+      FilePath     = $aria2
+      ArgumentList = "--bt-metadata-only --bt-save-metadata $source --dir=$dgpath\temp\btmeta --quiet"
+      Wait         = $true
+      NoNewWindow  = $true
+   }
+   Start-Process @aria2params
+   $torrentfile = (Get-ChildItem "$dgpath\temp\btmeta").Name
+   & "$aria2" --show-files "$dgpath\temp\btmeta\$torrentfile" > "$dgpath\temp\btmeta\torrentname.txt"
+   $torrentname = (Get-Content "$dgpath\temp\btmeta\torrentname.txt" | Select-String -Pattern "Name: " -SimpleMatch).Line.Split(": ")[1]
+   Remove-Item "$dgpath\temp\btmeta\" -Recurse -Force | Out-Null
+   return $torrentname
 }
 
 # flag - force
