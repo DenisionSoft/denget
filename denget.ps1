@@ -9,7 +9,7 @@ param (
    [switch]$quiet = $false
 )
 
-$dgver = "1.0.3"
+$dgver = "1.1.0"
 
 # function - general - Write-Host quiet-sensitive wrapper
 function Write-Quiet {
@@ -269,6 +269,7 @@ if($cmd -eq "install")
    {
       if ($portable -and $path -eq '') {$path = "$dgpath\apps"}
       add -item $name -bucket $bucket -path $path
+      New-Item -ItemType SymbolicLink -Path "$dgpath\links\$name" -Target "$path\$name\$appversion" -Force | Out-Null
       Remove-Variable appversion -Scope Global
       Remove-Variable portable -Scope Global
       Remove-Variable executable -Scope Global
@@ -387,6 +388,7 @@ if($cmd -eq "uninstall")
    else
    {
       remove -item $name
+      Remove-Item "$dgpath\links\$name" -Force | Out-Null
       Write-Quiet "Uninstalled " -n; Write-Quiet "$name" -f gre -n; Write-Quiet " successfully."
    }
 }
@@ -515,6 +517,7 @@ if($cmd -eq "upgrade")
       else
       {
          remove -item $name
+         Remove-Item "$dgpath\links\$name" -Force | Out-Null
       }
 
       $oldProgressPreference = $ProgressPreference
@@ -534,6 +537,7 @@ if($cmd -eq "upgrade")
       {
          if ($portable -and $path -eq '') {$path = "$dgpath\apps"}
          add -item $name -bucket $bucket -path $path
+         New-Item -ItemType SymbolicLink -Path "$dgpath\links\$name" -Target "$path\$name\$appversion" -Force | Out-Null
          Remove-Variable appversion -Scope Global
          Remove-Variable portable -Scope Global
       }

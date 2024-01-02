@@ -73,6 +73,7 @@ $global:ProgressPreference = $oldProgressPreference
 # create folders structure
 New-Item -ItemType Directory -Path "$dgpath\apps" | Out-Null
 New-Item -ItemType Directory -Path "$dgpath\temp" | Out-Null
+New-Item -ItemType Directory -Path "$dgpath\links" | Out-Null
 New-Item -ItemType Directory -Path "$dgpath\data\buckets" | Out-Null
 New-Item -ItemType Directory -Path "$dgpath\data\buckets\main" | Out-Null
 
