@@ -33,18 +33,20 @@ catch {
 
 ### ADDITIONAL UPGRADE STEPS ###
 
-$curverArr = $curver.Split(".")
-$major = $curverArr[0]
-$minor = $curverArr[1]
-$patch = $curverArr[2]
-
 ## 1.0.1 - .dengetrc file was removed
 
-if ($major -eq 1 -and $minor -eq 0 -and $patch -lt 1) {
+if ([System.Version]$curver -lt [System.Version]"1.0.1") {
    Write-Quiet "Removing .dengetrc file..."
    if(Test-Path "$env:USERPROFILE\.dengetrc") {
       Remove-Item "$env:USERPROFILE\.dengetrc" -Force
    }
+}
+
+## 1.1.0 - links folder was added
+
+if ([System.Version]$curver -lt [System.Version]"1.1.0") {
+   Write-Quiet "Creating links folder..."
+   New-Item -ItemType Directory -Path "$dgpath\links" | Out-Null
 }
 
 return 0
