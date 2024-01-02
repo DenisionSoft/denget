@@ -160,10 +160,14 @@ Description:
     Special command available - 'denget which denget'.
     Shows the path to the denget executable.
 
-Command - launch (l10)
+Command - launch (l14)
 Launch an installed app
 
 Usage: denget launch <name>
+
+Flags:
+    -h, -help    Show this help message
+    -q, -quiet   Launch without asking for arguments
 
 Description:
     Prompts to enter arguments for the app (useful for command-line programs) and launches it.

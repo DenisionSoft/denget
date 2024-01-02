@@ -781,7 +781,7 @@ if($cmd -eq "which")
    # special command - denget which denget
    if ($name -eq "denget")
    {
-      Write-Host "$dgpath"
+      Write-Output "$dgpath"
       exit
    }
 
@@ -794,7 +794,7 @@ if($cmd -eq "which")
    }
 
    $executable = getinstalled $name executable
-   Write-Host $executable
+   Write-Output $executable
 }
 
 # cmd - launch an installed app
@@ -823,6 +823,11 @@ if($cmd -eq "launch")
       Write-Host "executable file " -n
       Write-Host "$executable" -f gre -n
       Write-Host " does not exist."
+      exit
+   }
+
+   if ($quiet) {
+      & $executable
       exit
    }
    
