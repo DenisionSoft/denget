@@ -268,9 +268,19 @@ if($cmd -eq "install")
    }
    else
    {
-      if ($portable -and $path -eq '') {$path = "$dgpath\apps"}
+      if ($portable -and $path -eq '') {
+         $path = "$dgpath\apps"
+         New-Item -ItemType SymbolicLink -Path "$dgpath\links\$name" -Target "$path\$name\$appversion" -Force | Out-Null
+      }
+      elseif (!$portable) {
+         $path = $apppath
+         New-Item -ItemType SymbolicLink -Path "$dgpath\links\$name" -Target "$path" -Force | Out-Null
+      }
+      else {
+         New-Item -ItemType SymbolicLink -Path "$dgpath\links\$name" -Target "$path\$name\$appversion" -Force | Out-Null
+      }
       add -item $name -bucket $bucket -path $path
-      New-Item -ItemType SymbolicLink -Path "$dgpath\links\$name" -Target "$path\$name\$appversion" -Force | Out-Null
+      Remove-Variable apppath -Scope Global
       Remove-Variable appversion -Scope Global
       Remove-Variable portable -Scope Global
       Remove-Variable executable -Scope Global
