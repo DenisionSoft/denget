@@ -3,13 +3,14 @@ param (
    [string]$name,
    [string]$bucket = $null,
    [string]$path = $null,
+   [string]$release = $null,
    [switch]$version = $false,
    [switch]$help = $false,
    [switch]$force = $false,
    [switch]$quiet = $false
 )
 
-$dgver = "1.1.0"
+$dgver = "1.1.1"
 
 # function - general - Write-Host quiet-sensitive wrapper
 function Write-Quiet {
@@ -249,7 +250,7 @@ if($cmd -eq "install")
    {
       $oldProgressPreference = $ProgressPreference
       $global:ProgressPreference = 'SilentlyContinue'
-      & $script -cmd install -path $path -force:$force -quiet:$quiet
+      & $script -cmd install -path $path -release $release -force:$force -quiet:$quiet
    }
    catch
    {
@@ -267,9 +268,19 @@ if($cmd -eq "install")
    }
    else
    {
-      if ($portable -and $path -eq '') {$path = "$dgpath\apps"}
+      if ($portable -and $path -eq '') {
+         $path = "$dgpath\apps"
+         New-Item -ItemType SymbolicLink -Path "$dgpath\links\$name" -Target "$path\$name\$appversion" -Force | Out-Null
+      }
+      elseif (!$portable) {
+         $path = $apppath
+         New-Item -ItemType SymbolicLink -Path "$dgpath\links\$name" -Target "$path" -Force | Out-Null
+      }
+      else {
+         New-Item -ItemType SymbolicLink -Path "$dgpath\links\$name" -Target "$path\$name\$appversion" -Force | Out-Null
+      }
       add -item $name -bucket $bucket -path $path
-      New-Item -ItemType SymbolicLink -Path "$dgpath\links\$name" -Target "$path\$name\$appversion" -Force | Out-Null
+      Remove-Variable apppath -Scope Global
       Remove-Variable appversion -Scope Global
       Remove-Variable portable -Scope Global
       Remove-Variable executable -Scope Global
@@ -688,13 +699,13 @@ if($cmd -eq "status")
       {
          $oldProgressPreference = $ProgressPreference
          $ProgressPreference = 'SilentlyContinue'
-         $resolver = (Select-String -Path "$dgpath\data\buckets\$bucket\$name.ps1" -Pattern '\$version = .*').Matches.Value -replace '\$version = '
-         $newversion = Invoke-Expression $resolver
+         $resolver = (Select-String -Path "$dgpath\data\buckets\$bucket\$name.ps1" -Pattern '\$version = .*').Matches[0].Value -replace '\$version = '
+         $newversion = Invoke-Expression "$resolver"
          $ProgressPreference = $oldProgressPreference
       }
       else
       {
-         $newversion = (Select-String -Path "$dgpath\data\buckets\$bucket\$name.ps1" -Pattern 'version = "[a-zA-Z0-9.]*"').Matches.Value -replace 'version = "'
+         $newversion = (Select-String -Path "$dgpath\data\buckets\$bucket\$name.ps1" -Pattern 'version = "[a-zA-Z0-9.]*"').Matches[0].Value -replace 'version = "'
          $newversion = $newversion -replace '"'
       }
 
