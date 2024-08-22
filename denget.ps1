@@ -10,7 +10,7 @@ param (
    [switch]$quiet = $false
 )
 
-$dgver = "1.1.0"
+$dgver = "1.1.1"
 
 # function - general - Write-Host quiet-sensitive wrapper
 function Write-Quiet {
@@ -699,13 +699,13 @@ if($cmd -eq "status")
       {
          $oldProgressPreference = $ProgressPreference
          $ProgressPreference = 'SilentlyContinue'
-         $resolver = (Select-String -Path "$dgpath\data\buckets\$bucket\$name.ps1" -Pattern '\$version = .*').Matches.Value -replace '\$version = '
-         $newversion = Invoke-Expression $resolver
+         $resolver = (Select-String -Path "$dgpath\data\buckets\$bucket\$name.ps1" -Pattern '\$version = .*').Matches[0].Value -replace '\$version = '
+         $newversion = Invoke-Expression "$resolver"
          $ProgressPreference = $oldProgressPreference
       }
       else
       {
-         $newversion = (Select-String -Path "$dgpath\data\buckets\$bucket\$name.ps1" -Pattern 'version = "[a-zA-Z0-9.]*"').Matches.Value -replace 'version = "'
+         $newversion = (Select-String -Path "$dgpath\data\buckets\$bucket\$name.ps1" -Pattern 'version = "[a-zA-Z0-9.]*"').Matches[0].Value -replace 'version = "'
          $newversion = $newversion -replace '"'
       }
 
