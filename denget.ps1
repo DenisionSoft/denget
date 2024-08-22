@@ -3,6 +3,7 @@ param (
    [string]$name,
    [string]$bucket = $null,
    [string]$path = $null,
+   [string]$release = $null,
    [switch]$version = $false,
    [switch]$help = $false,
    [switch]$force = $false,
@@ -249,7 +250,7 @@ if($cmd -eq "install")
    {
       $oldProgressPreference = $ProgressPreference
       $global:ProgressPreference = 'SilentlyContinue'
-      & $script -cmd install -path $path -force:$force -quiet:$quiet
+      & $script -cmd install -path $path -release $release -force:$force -quiet:$quiet
    }
    catch
    {
